@@ -1,0 +1,2 @@
+rootProject.name='GitRepo App'
+include ':app'

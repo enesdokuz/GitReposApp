@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">GitRepo App</string>
+    <string name="no_content">No Content</string>
+
+    //Main
+    <string name="get_repos">Get Repos</string>
+    <string name="username_github">Username for Github</string>
+    <string name="error_empty_query">Should not be empty</string>
+
+    <string name="favorite">Favorite</string>
+    //Detail
+
+
+</resources>
