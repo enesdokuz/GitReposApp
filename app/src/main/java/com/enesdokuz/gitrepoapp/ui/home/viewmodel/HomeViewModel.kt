@@ -60,7 +60,7 @@ class HomeViewModel : ViewModel() {
             avatarUrl = "https://avatars0.githubusercontent.com/u/13020424?v=4"
         )
         val list: ArrayList<Repo> = arrayListOf()
-        for (i in 0..Random.nextInt(10,20)) {
+        for (i in 0..Random.nextInt(10, 20)) {
             list.add(
                 Repo(
                     id = Random.nextInt(900000).toString(),

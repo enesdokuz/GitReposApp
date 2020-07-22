@@ -2,9 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="20dp"
+    android:background="@drawable/desing_item"
     android:orientation="vertical"
-    android:background="@color/backgroundDetail"
     android:padding="20dp"
     tools:context=".ui.detail.fragment.DetailFragment">
 
@@ -17,28 +18,29 @@
             android:id="@+id/imgAvatar"
             android:layout_width="150dp"
             android:layout_height="150dp"
-            android:layout_marginEnd="20dp"/>
+            android:layout_marginEnd="20dp" />
 
         <TextView
+            android:id="@+id/txtOwnerName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Owner Name"
+            android:gravity="center"
             android:textSize="20sp"
-            android:id="@+id/txtOwnerName"/>
+            android:textStyle="bold"/>
     </LinearLayout>
 
     <TextView
+        android:id="@+id/txtStars"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/txtStars"
-        android:textSize="18sp"
-        android:text="Stars: 199"/>
+        android:gravity="center"
+        android:textSize="18sp" />
 
     <TextView
+        android:id="@+id/txtIssues"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/txtIssues"
-        android:textSize="18sp"
-        android:text="Open Issues: 199"/>
+        android:gravity="center"
+        android:textSize="18sp" />
 
 </LinearLayout>

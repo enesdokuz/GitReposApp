@@ -4,26 +4,27 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import androidx.navigation.Navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.enesdokuz.gitrepoapp.R
+import com.enesdokuz.gitrepoapp.model.Repo
 import com.enesdokuz.gitrepoapp.ui.base.BaseFragment
 import com.enesdokuz.gitrepoapp.ui.home.adapter.RepoAdapter
 import com.enesdokuz.gitrepoapp.ui.home.listener.ListClickListener
 import com.enesdokuz.gitrepoapp.ui.home.viewmodel.HomeViewModel
 import kotlinx.android.synthetic.main.home_fragment.*
 
-class HomeFragment : BaseFragment(),ListClickListener {
+class HomeFragment : BaseFragment(), ListClickListener {
 
     companion object {
         fun newInstance() = HomeFragment()
     }
 
     private val viewModel: HomeViewModel by activityViewModels()
-    private val repoAdapter = RepoAdapter(arrayListOf(),this)
+    private val repoAdapter = RepoAdapter(arrayListOf(), this)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -87,9 +88,9 @@ class HomeFragment : BaseFragment(),ListClickListener {
         }
     }
 
-    override fun onClickedItem(view: View, pos: Int) {
-        val action = HomeFragmentDirections.actionHomeFragmentToDetailFragment()
-        findNavController().navigate(action)
+    override fun onClickedItem(selectedRepo : Repo) {
+        val bundle = bundleOf("selectedRepo" to selectedRepo)
+        findNavController().navigate(R.id.action_homeFragment_to_detailFragment,bundle)
     }
 
     override fun onClickedFavorite(pos: Int) {

@@ -1,17 +1,19 @@
 package com.enesdokuz.gitrepoapp.ui.detail.fragment
 
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-
+import androidx.lifecycle.Observer
+import androidx.navigation.fragment.navArgs
+import com.bumptech.glide.Glide
 import com.enesdokuz.gitrepoapp.R
+import com.enesdokuz.gitrepoapp.model.Repo
 import com.enesdokuz.gitrepoapp.ui.base.BaseFragment
 import com.enesdokuz.gitrepoapp.ui.detail.viewmodel.DetailViewModel
-import kotlinx.android.synthetic.main.item_repo.*
+import com.enesdokuz.gitrepoapp.ui.home.fragment.HomeFragmentArgs
+import kotlinx.android.synthetic.main.detail_fragment.*
 
 class DetailFragment : BaseFragment() {
 
@@ -20,6 +22,7 @@ class DetailFragment : BaseFragment() {
     }
 
     private val viewModel: DetailViewModel by activityViewModels()
+    private val args: HomeFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,7 +33,27 @@ class DetailFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        //txtNameItem.text = arguments
+
+        observeLiveData()
+        arguments?.let {
+            requireArguments().get("selectedRepo").let {
+                viewModel.repo.value = it as Repo?
+            }
+
+        }
+    }
+
+    private fun observeLiveData() {
+        viewModel.repo.observe(viewLifecycleOwner, Observer { repo ->
+            repo?.let {
+                txtOwnerName.text = repo.name
+                txtIssues.text = "Open Issues: ${repo.openIssueCount}"
+                txtStars.text = "Stars: ${repo.starCount}"
+                txtOwnerName.text = repo.owner.username
+                Glide.with(requireContext()).load(repo.owner.avatarUrl).into(imgAvatar)
+            }
+
+        })
     }
 
 }
