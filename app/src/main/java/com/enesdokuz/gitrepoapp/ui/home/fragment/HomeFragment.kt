@@ -15,6 +15,7 @@ import com.enesdokuz.gitrepoapp.ui.base.BaseFragment
 import com.enesdokuz.gitrepoapp.ui.home.adapter.RepoAdapter
 import com.enesdokuz.gitrepoapp.ui.home.listener.ListClickListener
 import com.enesdokuz.gitrepoapp.ui.home.viewmodel.HomeViewModel
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.home_fragment.*
 
 class HomeFragment : BaseFragment(), ListClickListener {
@@ -43,6 +44,7 @@ class HomeFragment : BaseFragment(), ListClickListener {
     }
 
     private fun initUI() {
+        requireActivity().toolbar.title = "Home"
         viewModel.isLoading.value = false
         recyclerHome.setHasFixedSize(true)
         recyclerHome.isNestedScrollingEnabled = false

@@ -7,6 +7,7 @@
     android:background="@drawable/desing_item"
     android:orientation="vertical"
     android:padding="20dp"
+    android:elevation="10dp"
     tools:context=".ui.detail.fragment.DetailFragment">
 
     <LinearLayout

@@ -1,18 +1,15 @@
 package com.enesdokuz.gitrepoapp.ui.detail.fragment
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.enesdokuz.gitrepoapp.R
 import com.enesdokuz.gitrepoapp.model.Repo
 import com.enesdokuz.gitrepoapp.ui.base.BaseFragment
 import com.enesdokuz.gitrepoapp.ui.detail.viewmodel.DetailViewModel
-import com.enesdokuz.gitrepoapp.ui.home.fragment.HomeFragmentArgs
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.detail_fragment.*
 
 class DetailFragment : BaseFragment() {
@@ -22,7 +19,6 @@ class DetailFragment : BaseFragment() {
     }
 
     private val viewModel: DetailViewModel by activityViewModels()
-    private val args: HomeFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,19 +37,49 @@ class DetailFragment : BaseFragment() {
             }
 
         }
+        setHasOptionsMenu(true)
+        requireActivity().actionBar?.setDisplayHomeAsUpEnabled(true)
+
     }
 
     private fun observeLiveData() {
         viewModel.repo.observe(viewLifecycleOwner, Observer { repo ->
             repo?.let {
-                txtOwnerName.text = repo.name
+                requireActivity().toolbar.title = repo.name
+                txtOwnerName.text = repo.owner.username
                 txtIssues.text = "Open Issues: ${repo.openIssueCount}"
                 txtStars.text = "Stars: ${repo.starCount}"
                 txtOwnerName.text = repo.owner.username
                 Glide.with(requireContext()).load(repo.owner.avatarUrl).into(imgAvatar)
+                /*if (repo.isFavorite)
+                    requireActivity().toolbar.menu.getItem(R.id.item_favorite)
+                        .setIcon(R.drawable.ic_star_black)
+                else requireActivity().toolbar.menu?.getItem(R.id.item_favorite)
+                    .setIcon(R.drawable.ic_star_white)
+
+                 */
             }
 
         })
     }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.detail_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.item_favorite -> {
+                viewModel.repo.value?.let {
+                    viewModel.setFavoriteItem(itemId = it.id, isFavorite = !it.isFavorite)
+                }
+                true
+            }
+            else ->
+                super.onOptionsItemSelected(item)
+        }
+    }
+
 
 }
