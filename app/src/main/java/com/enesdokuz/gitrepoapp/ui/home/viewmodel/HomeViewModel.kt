@@ -60,6 +60,9 @@ class HomeViewModel(application: Application) : BaseViewModel(application) {
 
     private fun saveInSqLite(list: List<Repo>) {
         launch {
+            repoDao.deleteAllRepos()
+        }
+        launch {
             val reposDTO: ArrayList<RepoDTO> = arrayListOf()
             list.forEach { item ->
                 reposDTO.add(
@@ -74,7 +77,7 @@ class HomeViewModel(application: Application) : BaseViewModel(application) {
                     )
                 )
             }
-            repoDao.insertAll(*reposDTO.toTypedArray()).let {}
+            repoDao.insertAll(*reposDTO.toTypedArray())
         }
     }
 
