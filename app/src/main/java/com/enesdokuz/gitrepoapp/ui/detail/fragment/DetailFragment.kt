@@ -51,13 +51,6 @@ class DetailFragment : BaseFragment() {
                 txtStars.text = "Stars: ${repo.starCount}"
                 txtOwnerName.text = repo.owner.username
                 Glide.with(requireContext()).load(repo.owner.avatarUrl).into(imgAvatar)
-                /*if (repo.isFavorite)
-                    requireActivity().toolbar.menu.getItem(R.id.item_favorite)
-                        .setIcon(R.drawable.ic_star_black)
-                else requireActivity().toolbar.menu?.getItem(R.id.item_favorite)
-                    .setIcon(R.drawable.ic_star_white)
-
-                 */
             }
 
         })
@@ -65,6 +58,12 @@ class DetailFragment : BaseFragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.detail_menu, menu)
+        viewModel.repo.value?.let {
+            if (it.isFavorite)
+                menu.findItem(R.id.item_favorite).setIcon(R.drawable.ic_star_white)
+            else
+                menu.findItem(R.id.item_favorite).setIcon(R.drawable.ic_star_black)
+        }
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -73,6 +72,10 @@ class DetailFragment : BaseFragment() {
             R.id.item_favorite -> {
                 viewModel.repo.value?.let {
                     viewModel.setFavoriteItem(itemId = it.id, isFavorite = !it.isFavorite)
+                    if (it.isFavorite)
+                        item.setIcon(R.drawable.ic_star_black)
+                    else
+                        item.setIcon(R.drawable.ic_star_white)
                 }
                 true
             }
