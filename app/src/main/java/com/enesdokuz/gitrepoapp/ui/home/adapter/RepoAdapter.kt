@@ -39,7 +39,7 @@ class RepoAdapter(private val list: ArrayList<Repo>, val listener: ListClickList
         }
 
         holder.view.imgFavoriteItem.setOnClickListener {
-            listener.onClickedFavorite(position)
+            listener.onClickedFavorite(position, list[position].id, !list[position].isFavorite)
         }
 
     }

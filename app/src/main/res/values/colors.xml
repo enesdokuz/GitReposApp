@@ -7,4 +7,7 @@
     <color name="backgroundList">#E6E6E6</color>
     <color name="backgroundMain">#E6E6E6</color>
     <color name="backgroundDetail">#E6E6E6</color>
+
+    <color name="backgroundErrorMessage">#E63232</color>
+    <color name="textErrorMessage">#E6E6E6</color>
 </resources>

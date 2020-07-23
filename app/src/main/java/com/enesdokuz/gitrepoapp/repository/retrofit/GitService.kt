@@ -1,4 +1,4 @@
-package com.enesdokuz.gitrepoapp.repository
+package com.enesdokuz.gitrepoapp.repository.retrofit
 
 import com.enesdokuz.gitrepoapp.BuildConfig
 import com.enesdokuz.gitrepoapp.model.Repo

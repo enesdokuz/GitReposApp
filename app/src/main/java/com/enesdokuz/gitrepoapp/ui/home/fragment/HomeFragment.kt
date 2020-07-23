@@ -39,6 +39,7 @@ class HomeFragment : BaseFragment(), ListClickListener {
         initUI()
         observeLiveData()
         initController()
+        viewModel.getReposFromSqLite()
     }
 
     private fun initUI() {
@@ -87,13 +88,14 @@ class HomeFragment : BaseFragment(), ListClickListener {
         }
     }
 
-    override fun onClickedItem(selectedRepo : Repo) {
+    override fun onClickedItem(selectedRepo: Repo) {
         val bundle = bundleOf("selectedRepo" to selectedRepo)
-        findNavController().navigate(R.id.action_homeFragment_to_detailFragment,bundle)
+        findNavController().navigate(R.id.action_homeFragment_to_detailFragment, bundle)
     }
 
-    override fun onClickedFavorite(pos: Int) {
+    override fun onClickedFavorite(pos: Int, id: String, isFavorite: Boolean) {
         repoAdapter.setFavorite(pos)
+        viewModel.setFavoriteItem(isFavorite = isFavorite,itemId = id)
     }
 
 }

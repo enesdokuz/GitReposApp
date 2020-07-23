@@ -14,5 +14,6 @@ data class Repo(
     val starCount: Long,
     @SerializedName("owner")
     val owner: Owner,
+    @SerializedName("isFavorite")
     var isFavorite: Boolean = false
 ) : Serializable

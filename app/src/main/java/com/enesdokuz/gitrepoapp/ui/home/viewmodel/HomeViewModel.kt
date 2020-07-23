@@ -1,34 +1,36 @@
 package com.enesdokuz.gitrepoapp.ui.home.viewmodel
 
 import android.annotation.SuppressLint
+import android.app.Application
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.enesdokuz.gitrepoapp.model.Owner
 import com.enesdokuz.gitrepoapp.model.Repo
-import com.enesdokuz.gitrepoapp.repository.GitService
+import com.enesdokuz.gitrepoapp.model.RepoDTO
+import com.enesdokuz.gitrepoapp.repository.retrofit.GitService
+import com.enesdokuz.gitrepoapp.repository.room.RepoDatabase
+import com.enesdokuz.gitrepoapp.ui.base.BaseViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.launch
 import kotlin.random.Random
 
-class HomeViewModel : ViewModel() {
+class HomeViewModel(application: Application) : BaseViewModel(application) {
 
     val repos = MutableLiveData<List<Repo>>()
     val isLoading = MutableLiveData<Boolean>()
     val hasError = MutableLiveData<Boolean>()
     val errorMessage = MutableLiveData<String>()
-    private val gitService = GitService()
+    private val gitService =
+        GitService()
     private val disposable = CompositeDisposable()
+    private val repoDao = RepoDatabase(context = getApplication()).repoDao()
 
     fun getUserRepos(username: String?) {
         if (username.isNullOrEmpty()) {
             showError("Empty Query")
         } else {
-            showLoading()
-        }
-        username?.let {
-            getUserReposFromGitHub(it)
-            //getDummy()
+            getUserReposFromGitHub(username)
         }
     }
 
@@ -42,6 +44,7 @@ class HomeViewModel : ViewModel() {
                     result?.let {
                         hideLoading()
                         repos.value = it
+                        saveInSqLite(it)
                     }
                 }, { error ->
                     error?.let {
@@ -53,6 +56,57 @@ class HomeViewModel : ViewModel() {
                 })
         )
 
+    }
+
+    private fun saveInSqLite(list: List<Repo>) {
+        launch {
+            val reposDTO: ArrayList<RepoDTO> = arrayListOf()
+            list.forEach { item ->
+                reposDTO.add(
+                    RepoDTO(
+                        id = item.id,
+                        name = item.name,
+                        openIssueCount = item.openIssueCount,
+                        starCount = item.starCount,
+                        isFavorite = item.isFavorite,
+                        ownerAvatarUrl = item.owner.avatarUrl,
+                        ownerUsername = item.owner.username
+                    )
+                )
+            }
+            repoDao.insertAll(*reposDTO.toTypedArray()).let {}
+        }
+    }
+
+    fun getReposFromSqLite() {
+        showLoading()
+        launch {
+            val reposDTO: List<RepoDTO> = repoDao.getAllRepos()
+            val reposTemp: ArrayList<Repo> = arrayListOf()
+            reposDTO.forEach { item ->
+                reposTemp.add(
+                    Repo(
+                        id = item.id,
+                        name = item.name,
+                        openIssueCount = item.openIssueCount,
+                        starCount = item.starCount,
+                        isFavorite = item.isFavorite,
+                        owner = Owner(
+                            username = item.ownerUsername,
+                            avatarUrl = item.ownerAvatarUrl
+                        )
+                    )
+                )
+            }
+            repos.value = reposTemp
+            hideLoading()
+        }
+    }
+
+    fun setFavoriteItem(isFavorite: Boolean, itemId: String) {
+        launch {
+            repoDao.updateRepo(isFavorite = isFavorite, id = itemId)
+        }
     }
 
     private fun getDummy() {
