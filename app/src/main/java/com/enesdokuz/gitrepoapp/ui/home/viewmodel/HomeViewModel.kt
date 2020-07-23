@@ -1,12 +1,14 @@
 package com.enesdokuz.gitrepoapp.ui.home.viewmodel
 
+import android.annotation.SuppressLint
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.enesdokuz.gitrepoapp.model.Owner
 import com.enesdokuz.gitrepoapp.model.Repo
-import com.github.kittinunf.fuel.Fuel
-import com.github.kittinunf.fuel.core.Headers
-import com.github.kittinunf.fuel.gson.responseObject
+import com.enesdokuz.gitrepoapp.repository.GitService
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlin.random.Random
 
 class HomeViewModel : ViewModel() {
@@ -15,6 +17,8 @@ class HomeViewModel : ViewModel() {
     val isLoading = MutableLiveData<Boolean>()
     val hasError = MutableLiveData<Boolean>()
     val errorMessage = MutableLiveData<String>()
+    private val gitService = GitService()
+    private val disposable = CompositeDisposable()
 
     fun getUserRepos(username: String?) {
         if (username.isNullOrEmpty()) {
@@ -23,33 +27,31 @@ class HomeViewModel : ViewModel() {
             showLoading()
         }
         username?.let {
-            //getUserReposFromGitHub(it)
-            getDummy()
+            getUserReposFromGitHub(it)
+            //getDummy()
         }
     }
 
+    @SuppressLint("CheckResult")
     private fun getUserReposFromGitHub(username: String) {
-
-        Fuel.get("https://api.github.com/users/$username/repos")
-            .header(Headers.ACCEPT, "application/vnd.github.v3+json")
-            .responseObject<List<Repo>> { request, response, result ->
-                println(request)
-                println(response)
-                println(result)
-                isLoading.value = false
-                repos.value = result.get()
-                /*
-                println("Status code: $response.statusCode")
-                if (response.statusCode.toString().startsWith("2")){
-                    //repos.value = response.data
-                }else{
-                    errorMessage.value = "Error from Fuel"
-                    hasError.value = true
-                }
-                println(response.statusCode)
-                */
-            }
-
+        disposable.add(
+            gitService.getUserRepos(username)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ result ->
+                    result?.let {
+                        hideLoading()
+                        repos.value = it
+                    }
+                }, { error ->
+                    error?.let {
+                        error.localizedMessage?.let {
+                            showError(it)
+                        }
+                        println("getUserReposFromGitHub error. $error")
+                    }
+                })
+        )
 
     }
 
@@ -91,5 +93,10 @@ class HomeViewModel : ViewModel() {
     private fun hideLoading() {
         isLoading.value = false
         hasError.value = false
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        disposable.dispose()
     }
 }

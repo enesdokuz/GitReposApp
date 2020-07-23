@@ -39,7 +39,6 @@ class HomeFragment : BaseFragment(), ListClickListener {
         initUI()
         observeLiveData()
         initController()
-
     }
 
     private fun initUI() {
